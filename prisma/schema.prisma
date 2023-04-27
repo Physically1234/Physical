@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("postgresql://postgres:postgres@localhost:54322/postgres")
+}
+
+model physically_challenged_person{
+  name    String
+  profile_picture   post[]
+  phone_number    Int
+  mail_id   String
+  gender    String
+  location    String
+  about   String
+  job_intersts    String
+  skills    String
+  achivements   String
+  resume    post[]
+  date_of_birth   DateTime
+  id_proof    post[]
+  type_of_disability    post[]
+  age   Int
+  certificate   post[]
+  education     String
+  work_exprince   String
+  user_id     Int   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  save_post   post[]
+
+}
+
+
+
+model voice_assistance{
+  voice   String
+}
+
+
+model certificate_id{
+  udid    String
+  govt_portal String
+}
+
+
+model post{
+  date    DateTime  @default(dbgenerated("now()"))
+  time    DateTime  @default(dbgenerated("now()"))
+  caption   String
+  video   post[]
+  photo   post[]
+  comment   post[]
+  like    Int
+  blogs   String
+  post_id   Int @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+}
+
+
+model intersted_users{
+  job_id    Int @relation(fields: [job_offer],references: [job_id])
+  user_id   Int @relation(fields: [physically_challenged_person],references: [user_id])
+}
+
+
+
+model ngo_s{
+  company_name    String
+  profile_photo   post[]
+  phone_number    Int
+  mail_id   String
+  location    String
+  about   String
+  company_id    Int
+  address   String
+  job_offer   post[]
+}
+
+
+model job_offer{
+  salary    Int
+  skills    String
+  company_id    Int
+  company_addres    String
+  contact   String
+  qualification   String
+  job_id    Int @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  specifications    String
+}
+
+
+model job_fliter{
+  skills    String  @relation(fields: [physically_challenged_person],references: [skills])
+  job_role    String
+  place   String
+  salary    Int
+}
+
+
+model helpline{
+  chat_box    String
+  voice   String
+  contact_number    Int
+}
