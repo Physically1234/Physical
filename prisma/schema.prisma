@@ -11,7 +11,7 @@ datasource db {
 }
 
 model pcp {
-  id             String     @id @default(dbgenerated("get_random_uuid()")) @db.Uuid
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name           String     @unique
   email          String     @unique
   contact_number Int        @unique
@@ -22,26 +22,26 @@ model pcp {
 }
 
 model posts {
-  id         String     @id @default(dbgenerated("get_random_uuid()")) @db.Uuid
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title      String
   content    String
-  created_at DateTime   @default(dbgenerated("now"))
+  created_at DateTime   @default(dbgenerated("now()"))
   comments   comments[]
-  pcp        pcp?       @relation(fields: [pcpId], references: [id])
-  pcpId      String?    @db.Uuid
+  pcp        pcp       @relation(fields: [pcpId], references: [id])
+  pcpId      String    @db.Uuid
 }
 
 model comments {
-  id       String  @id @default(dbgenerated("get_random_uuid()")) @db.Uuid
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   comments String
-  pcp      pcp?    @relation(fields: [pcpId], references: [id])
-  pcpId    String? @db.Uuid
-  posts    posts?  @relation(fields: [postsId], references: [id])
-  postsId  String? @db.Uuid
+  pcp      pcp    @relation(fields: [pcpId], references: [id])
+  pcpId    String @db.Uuid
+  posts    posts  @relation(fields: [postsId], references: [id])
+  postsId  String @db.Uuid
 }
 
 model ngo {
-  id             String      @id @default(dbgenerated("get_random_uuid()")) @db.Uuid
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name           String
   email          String
   contact_number Int
@@ -51,12 +51,12 @@ model ngo {
 }
 
 model job_offer {
-  id          String   @id @default(dbgenerated("get_random_uuid()")) @db.Uuid
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   profession  String
   time        DateTime
   location    String
   salary      Int
   description String
-  ngo         ngo?     @relation(fields: [ngoId], references: [id])
-  ngoId       String?  @db.Uuid
+  ngo         ngo     @relation(fields: [ngoId], references: [id])
+  ngoId       String  @db.Uuid
 }
