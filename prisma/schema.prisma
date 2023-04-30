@@ -19,6 +19,7 @@ model pcp {
   address        String
   posts          posts[]
   comments       comments[]
+  skills         skills[]
 }
 
 model posts {
@@ -27,12 +28,12 @@ model posts {
   content    String
   created_at DateTime   @default(dbgenerated("now()"))
   comments   comments[]
-  pcp        pcp       @relation(fields: [pcpId], references: [id])
-  pcpId      String    @db.Uuid
+  pcp        pcp        @relation(fields: [pcpId], references: [id])
+  pcpId      String     @db.Uuid
 }
 
 model comments {
-  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   comments String
   pcp      pcp    @relation(fields: [pcpId], references: [id])
   pcpId    String @db.Uuid
@@ -51,12 +52,33 @@ model ngo {
 }
 
 model job_offer {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  profession  String
-  time        DateTime
-  location    String
-  salary      Int
-  description String
-  ngo         ngo     @relation(fields: [ngoId], references: [id])
-  ngoId       String  @db.Uuid
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profession     String
+  skills         String
+  transportation String
+  time           DateTime
+  location       String
+  salary         Int
+  description    String
+  ngo            ngo      @relation(fields: [ngoId], references: [id])
+  ngoId          String   @db.Uuid
+  skills         skills[]
+}
+
+model job_filter {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  skills         String
+  transportation String
+  time           DateTime
+  location       String
+  salary         Int
+}
+
+model skills {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  skills      String
+  pcp         pcp       @relation(fields: [pcpId], references: [id])
+  pcpId       String    @db.Uuid
+  job_offer   job_offer @relation(fields: [job_offerId], references: [id])
+  job_offerId String    @db.Uuid
 }
