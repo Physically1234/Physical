@@ -11,15 +11,16 @@ datasource db {
 }
 
 model pcp {
-  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name           String     @unique
-  email          String     @unique
-  contact_number Int        @unique
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String      @unique
+  email          String      @unique
+  contact_number Int         @unique
   bio            String
   address        String
   posts          posts[]
   comments       comments[]
-  skills         skills[]
+  job_filter     job_filter? @relation(fields: [job_filterId], references: [id])
+  job_filterId   String?     @db.Uuid
 }
 
 model posts {
@@ -62,7 +63,7 @@ model job_offer {
   description    String
   ngo            ngo      @relation(fields: [ngoId], references: [id])
   ngoId          String   @db.Uuid
-  skills         skills[]
+  skill          skill[]
 }
 
 model job_filter {
@@ -72,13 +73,12 @@ model job_filter {
   time           DateTime
   location       String
   salary         Int
+  pcp            pcp[]
 }
 
-model skills {
+model skill {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   skills      String
-  pcp         pcp       @relation(fields: [pcpId], references: [id])
-  pcpId       String    @db.Uuid
   job_offer   job_offer @relation(fields: [job_offerId], references: [id])
   job_offerId String    @db.Uuid
 }
