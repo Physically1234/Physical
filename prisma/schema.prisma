@@ -7,101 +7,74 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("postgresql://postgres:postgres@localhost:54322/postgres")
+  url      = env("DATABASE_URL")
 }
 
-model physically_challenged_person{
-  name    String
-  profile_picture   post[]
-  phone_number    Int
-  mail_id   String
-  gender    String
-  location    String
-  about   String
-  job_intersts    String
-  skills    String
-  achivements   String
-  resume    post[]
-  date_of_birth   DateTime
-  id_proof    post[]
-  type_of_disability    post[]
-  age   Int
-  certificate   post[]
-  education     String
-  work_exprince   String
-  user_id     Int   @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  save_post   post[]
-
+model pcp {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String      @unique
+  email          String      @unique
+  password       String
+  contact_number String      @unique
+  bio            String
+  address        String
+  posts          posts[]
+  comments       comments[]
+  job_filter     job_filter? @relation(fields: [job_filterId], references: [id])
+  job_filterId   String?     @db.Uuid
 }
 
-
-
-model voice_assistance{
-  voice   String
+model posts {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title      String
+  content    String
+  created_at DateTime   @default(dbgenerated("now()"))
+  comments   comments[]
+  pcp        pcp        @relation(fields: [pcpId], references: [id])
+  pcpId      String     @db.Uuid
+  ngo        ngo?       @relation(fields: [ngoId], references: [id])
+  ngoId      String?    @db.Uuid
 }
 
-
-model certificate_id{
-  udid    String
-  govt_portal String
+model comments {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  comments String
+  pcp      pcp    @relation(fields: [pcpId], references: [id])
+  pcpId    String @db.Uuid
+  posts    posts  @relation(fields: [postsId], references: [id])
+  postsId  String @db.Uuid
 }
 
-
-model post{
-  date    DateTime  @default(dbgenerated("now()"))
-  time    DateTime  @default(dbgenerated("now()"))
-  caption   String
-  video   post[]
-  photo   post[]
-  comment   post[]
-  like    Int
-  blogs   String
-  post_id   Int @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+model ngo {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  email          String
+  password       String
+  contact_number Int
+  bio            String
+  address        String
+  job_offer      job_offer[]
+  posts          posts[]
 }
 
-
-model intersted_users{
-  job_id    Int @relation(fields: [job_offer],references: [job_id])
-  user_id   Int @relation(fields: [physically_challenged_person],references: [user_id])
+model job_offer {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  profession     String
+  skills         String
+  transportation String
+  time           DateTime
+  location       String
+  salary         Int
+  description    String
+  ngo            ngo      @relation(fields: [ngoId], references: [id])
+  ngoId          String   @db.Uuid
 }
 
-
-
-model ngo_s{
-  company_name    String
-  profile_photo   post[]
-  phone_number    Int
-  mail_id   String
-  location    String
-  about   String
-  company_id    Int
-  address   String
-  job_offer   post[]
-}
-
-
-model job_offer{
-  salary    Int
-  skills    String
-  company_id    Int
-  company_addres    String
-  contact   String
-  qualification   String
-  job_id    Int @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  specifications    String
-}
-
-
-model job_fliter{
-  skills    String  @relation(fields: [physically_challenged_person],references: [skills])
-  job_role    String
-  place   String
-  salary    Int
-}
-
-
-model helpline{
-  chat_box    String
-  voice   String
-  contact_number    Int
+model job_filter {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  skills   String
+  time     DateTime
+  location String
+  salary   Int
+  pcp      pcp[]
 }
