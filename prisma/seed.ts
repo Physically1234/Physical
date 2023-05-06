@@ -32,7 +32,7 @@ const main = async () => {
             }
         })
     }
-}
+
 
 const user = await prisma.pcp.findMany();
 const post = await prisma.posts.findFirst();
@@ -55,4 +55,4 @@ await Promise.all(
         });
     })
 );
-
+}
