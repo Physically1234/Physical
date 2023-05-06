@@ -1,19 +1,16 @@
-name: Release
+name: CI
 
 on:
+  pull_request:
   push:
     branches:
       - main
+      - develop
   workflow_dispatch:
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
-
-    env:
-      SUPABASE_ACCESS_TOKEN: sbp_d6c2fc951b72e070993bd1a26947ad04bc31cb75
-      SUPABASE_DB_PASSWORD: Oxux0Ghh60q0bS4N
-      PROJECT_ID: fosadsuptpglvftdlfdt
 
     steps:
       - uses: actions/checkout@v3
@@ -22,5 +19,14 @@ jobs:
         with:
           version: latest
 
-      - run: supabase link --project-ref $PROJECT_ID
-      - run: supabase db push
+      - run: supabase db start
+      - run: supabase db lint
+
+      - name: Verify generated types are checked in
+        run: |
+          supabase gen types typescript --local > types.gen.ts
+          if ! git diff --ignore-space-at-eol --exit-code --quiet types.gen.ts; then
+            echo "Detected uncommitted changes after build. See status below:"
+            git diff
+            exit 1
+          fi
